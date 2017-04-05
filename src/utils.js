@@ -5,7 +5,8 @@ const path = require('path')
 const fs = require('fs')
 
 const options = {
-  encoding: 'utf8'
+  encoding: 'utf8',
+  dot: true
 }
 
 function logSubstitution(from, to) {
@@ -28,7 +29,7 @@ function substituteName(pattern, from, to, verbose = false) {
 }
 
 function renameInitialFiles(pattern, verbose) {
-  const files = glob(pattern)
+  const files = glob(pattern, { dot: true })
   files.forEach((file) => {
     const dir = path.dirname(file)
     const filename = path.basename(file)
