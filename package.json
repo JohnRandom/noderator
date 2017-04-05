@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "name": "noderator",
+  "version": "1.0.0",
+  "description": "CLI for autogenerating code",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive ./spec/unit",
+    "test:watch": "mocha --recursive --watch ./spec/unit",
+    "eslint": "eslint --cache -c .eslintrc.js src"
+  },
+  "keywords": [
+    "cli",
+    "node",
+    "react",
+    "code-generator"
+  ],
+  "author": "Moritz Krog <moritzkrog@gmail.com>",
+  "license": "MIT",
+  "bin": {
+    "nr": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "1.1.3",
+    "commander": "2.9.0",
+    "fs-extra": "^2.1.2",
+    "ramda": "0.23.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.1",
+    "chai": "^3.5.0",
+    "eslint": "^3.18.0",
+    "eslint-config-standard": "^7.1.0",
+    "eslint-plugin-mocha": "^4.9.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-standard": "^2.1.1",
+    "mocha": "^3.2.0"
+  }
+}
