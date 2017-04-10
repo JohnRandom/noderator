@@ -16,7 +16,7 @@ const modulesPath = path.resolve(basePath, './modules')
 
 module.exports = {
   devtool: 'source-map',
-  entry: './src/main',
+  entry: './src/main.js',
 
   output: {
     path: buildPath,
@@ -58,7 +58,7 @@ module.exports = {
   module: {
     preLoaders: [
       {
-        test: /\.js?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'eslint'
       }
@@ -71,14 +71,14 @@ module.exports = {
         loader: 'json'
       },
       {
-        test: /\.js?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
       },
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?importLoaders=1!postcss-loader')
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&postcss-loader&localIdentName=[name]__[local]___[hash:base64:5]')
       },
       {
         test: /\.css$/,
@@ -88,7 +88,7 @@ module.exports = {
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader')
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader?modules=true')
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -121,7 +121,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['', '.js', '.css'],
+    extensions: ['', '.js', '.jsx', '.css'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,

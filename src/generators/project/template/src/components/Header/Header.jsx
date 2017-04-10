@@ -1,10 +1,10 @@
 import React from 'react'
-import styles from './styles'
+import styles from './styles.css'
 
 export default class Header extends React.Component {
   render() {
     return (
-      <div style={styles}>PROJECT_NAME</div>
+      <div className={styles.Header}>TestProject2</div>
     )
   }
 }

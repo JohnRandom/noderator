@@ -10,8 +10,8 @@
         "transform-decorators-legacy",
     ],
     "env": {
-        production: {
-            plugins: [
+        "production": {
+            "plugins": [
                 "transform-remove-console",
                 "transform-remove-debugger",
                 "transform-react-inline-elements",

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Router, browserHistory } from 'react-router'
 
-import App from './layouts'
+import App from './layouts/App'
 
 const routes = {
   path: '/',

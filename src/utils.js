@@ -1,49 +1,89 @@
 const glob = require('glob').sync
 const replace = require('replace-in-file')
 const chalk = require('chalk')
-const path = require('path')
-const fs = require('fs')
+const fsPath = require('path')
+const fs = require('fs-extra')
 
-const options = {
-  encoding: 'utf8',
+const substitutionOptions = {
+  encoding: 'utf8'
+}
+
+const globOptions = {
   dot: true
 }
 
 function logSubstitution(from, to) {
   return (file) => {
     console.log(
-      chalk.yellow('VERBOSE:'),
+      chalk.yellow('VERBOSE'),
       `Replacing "${from}" -> "${to}" in ${file}`
     )
   }
 }
 
 function substituteName(pattern, from, to, verbose = false) {
-  options.files = pattern instanceof Array ? pattern : [ pattern ]
-  options.from = from
-  options.to = to
+  substitutionOptions.files = pattern instanceof Array ? pattern : [ pattern ]
+  substitutionOptions.from = new RegExp(from, 'g')
+  substitutionOptions.to = to
 
-  const files = replace.sync(options)
+  const files = replace.sync(substitutionOptions)
 
   if (verbose) files.forEach(logSubstitution(from, to))
 }
 
 function renameInitialFiles(pattern, verbose) {
-  const files = glob(pattern, { dot: true })
+  const files = glob(pattern, globOptions)
   files.forEach((file) => {
-    const dir = path.dirname(file)
-    const filename = path.basename(file)
+    const dir = fsPath.dirname(file)
+    const filename = fsPath.basename(file)
     const newFilename = filename.replace('.initial', '')
 
     fs.renameSync(file, `${dir}/${newFilename}`)
 
     if (verbose) {
       console.log(
-        chalk.yellow('VERBOSE:'),
+        chalk.yellow('VERBOSE'),
         `Renaming ${file} -> ${dir}/${newFilename}`
       )
     }
   })
 }
 
-module.exports = { substituteName, renameInitialFiles }
+function checkDirectoryRoot(dirRoot, force) {
+  if (!fs.existsSync(dirRoot)) { return true }
+
+  if (force) {
+    console.log(chalk.yellow(`WARNING Forced overwrite of "${dirRoot}"`))
+  } else {
+    throw new Error(`Directory ${dirRoot} already exists`)
+  }
+
+  return true
+}
+
+function generate(defaultPath, templateDir, placeholder) {
+  return function generateTree (keyword, type, name, program) {
+    const { verbose, force } = program
+    const path = program.path || defaultPath
+    const location = fsPath.resolve(fsPath.join(path, name))
+    placeholder = placeholder || `${type.toUpperCase()}_NAME`
+
+    const message = `INFO Generating ${type}: ${name}`
+    console.log(chalk.cyan(message))
+
+    if (checkDirectoryRoot(location, force)) {
+      fs.copySync(templateDir, location)
+      renameInitialFiles(`${location}/**/*.initial`, verbose)
+      substituteName(`${location}/**/*.*`, placeholder, name, verbose)
+    }
+
+    console.log(`SUCCESS New ${type} "${name}" created at ${location}`)
+  }
+}
+
+module.exports = {
+  substituteName,
+  renameInitialFiles,
+  checkDirectoryRoot,
+  generate
+}

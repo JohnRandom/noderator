@@ -68,7 +68,7 @@ program
       }
 
       try {
-        func(name, program)
+        func(keyword, type, name, program)
       } catch (err) {
         console.log(chalk.red(err.message))
         console.log(chalk.red(err.stack))

@@ -20,7 +20,7 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:3000',
     'webpack/hot/only-dev-server',
-    './src/main'
+    './src/main.js'
   ],
 
   output: {
@@ -55,14 +55,14 @@ module.exports = {
         loader: 'json'
       },
       {
-        test: /\.js?$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
       },
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?importLoaders=1!postcss-loader')
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&postcss-loader&localIdentName=[name]__[local]___[hash:base64:5]')
       },
       {
         test: /\.css$/,
@@ -72,7 +72,7 @@ module.exports = {
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader')
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader?modules=true')
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -98,14 +98,8 @@ module.exports = {
     ]
   },
 
-  resolveLoader: {
-    alias: {
-      'jison-loader': path.resolve(__dirname, './jison-loader.js')
-    }
-  },
-
   resolve: {
-    extensions: ['', '.js', '.json', '.css'],
+    extensions: ['', '.js', '.jsx', '.json', '.css'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
