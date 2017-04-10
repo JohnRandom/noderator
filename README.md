@@ -50,17 +50,10 @@ Options:
 
 | Option    | Explanation                                                           |
 | --------- | --------------------------------------------------------------------- |
-| `config`  | A path to the configuration for noderator, see below for an example   |
-|           | configuration.                                                        |
-| --------- | --------------------------------------------------------------------- |
-| `path`    | Provides a path were to copy the template directories and files.      |
-|           | It overwrites the default locations.
-| --------- | --------------------------------------------------------------------- |
+| `config`  | A path to the configuration for noderator, see below for an example configuration. |
+| `path`    | Provides a path were to copy the template directories and files. It overwrites the default locations. |
 | `verbose` | More verbose output during code generation.                           |
-| --------- | --------------------------------------------------------------------- |
-| `force`   | If new code would overwrite existing one, noderator will throw an     |
-|           | error and exit with status (1). This flag will prevent this behavior, |
-|           | issue a warning instead and overwrite the existing file or directory. |
+| `force`   | If new code would overwrite existing one, noderator will throw an error and exit with status (1). This flag will prevent this behavior, issue a warning instead and overwrite the existing file or directory. |
 
 ### Keywords
 
@@ -156,6 +149,3 @@ module.exports = {
   }
 }
 ```
-
-### Projects
-Entirely new project
