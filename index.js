@@ -71,7 +71,7 @@ program
         func(keyword, type, name, program)
       } catch (err) {
         console.log(chalk.red(err.message))
-        console.log(chalk.red(err.stack))
+        if (program.verbose) console.log(chalk.red(err.stack))
         process.exit(1)
       }
     })
