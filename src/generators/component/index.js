@@ -65,10 +65,11 @@ function generateComponent(keyword, type, name, program) {
 
   if (isSubcomponent(name)) {
     const moduleName = getModuleName(name)
+    const modulePath = basePath = path.join('./src/modules', moduleName)
     basePath = path.join('./src/modules', moduleName, 'components')
     name = getComponentName(name)
 
-    if (!(fs.existsSync(basePath) || program.force)) {
+    if (!(fs.existsSync(modulePath) || program.force)) {
       throw new Error(`Module "${moduleName}" doesn't exist!`)
     }
   }
