@@ -67,16 +67,21 @@ function generate(defaultPath, templateDir, placeholder = null) {
     const { verbose, force } = program
     const path = program.path || defaultPath
     const location = fsPath.resolve(fsPath.join(path, name))
+    const stats = fs.lstatSync(templateDir)
     placeholder = placeholder || `${type.toUpperCase()}_NAME`
 
     const message = `INFO Generating ${type}: ${name}`
     console.log(chalk.cyan(message))
 
     if (checkDirectoryRoot(location, force)) {
-      fs.copySync(templateDir, location)
-      renameInitialFiles(`${location}/**/*.initial`, verbose)
-      if (!R.isNil(placeholder)) {
-        substituteName(`${location}/**/*.*`, placeholder, name, verbose)
+      if (stats.isDirectory()) {
+        fs.copySync(templateDir, location)
+        renameInitialFiles(`${location}/**/*.initial`, verbose)
+        if (!R.isNil(placeholder)) {
+          substituteName(`${location}/**/*.*`, placeholder, name, verbose)
+        }
+      } else if (stats.isFile()) {
+        fs.copySync(templateDir, `${location}.js`)
       }
     }
 
