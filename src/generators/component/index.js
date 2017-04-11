@@ -66,7 +66,7 @@ function generateComponent(keyword, type, name, program) {
   if (isSubcomponent(name)) {
     const moduleName = getModuleName(name)
     const modulePath = basePath = path.join('./src/modules', moduleName)
-    basePath = path.join('./src/modules', moduleName, 'components')
+    basePath = path.join(modulePath, 'components')
     name = getComponentName(name)
 
     if (!(fs.existsSync(modulePath) || program.force)) {
