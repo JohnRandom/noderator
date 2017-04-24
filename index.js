@@ -5,7 +5,7 @@ const R = require('ramda')
 
 function getConfig() {
   let config
-  const path = program.path || './config.js'
+  const path = program.config || './config.js'
 
   try {
     config = require(path)
