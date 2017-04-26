@@ -45,6 +45,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       inject: 'head',
+      title: 'PROJECT_NAME',
       template: path.resolve(basePath, './index.html')
     }),
     new ScriptExtHtmlWebpackPlugin({
