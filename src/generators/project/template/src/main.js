@@ -1,5 +1,3 @@
-/* globals module, require */
-/* eslint-disable no-unused-vars */
 import React from 'react'
 import 'babel-polyfill'
 

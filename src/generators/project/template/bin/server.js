@@ -1,5 +1,5 @@
-import express from 'express'
-import path from 'path'
+const express = require('express')
+const path = require('path')
 
 const app = express()
 const ROOT_DIR = path.join(__dirname, '..')
@@ -32,9 +32,9 @@ if (!process.env.PRODUCTION) {
   const WebpackDevServer = require('webpack-dev-server')
   const config = require('../config/webpack.dev.config')
 
+  console.log('starting dev server')
   new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,
-    hot: true,
     noInfo: true,
     historyApiFallback: true,
     stats: {
