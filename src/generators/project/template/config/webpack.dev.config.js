@@ -15,7 +15,7 @@ const modulesPath = path.resolve(basePath, './modules')
 
 module.exports = {
   cache: true,
-  debug: true,
+  // debug: true,
   devtool: 'eval-source-map',
 
   entry: [
@@ -39,7 +39,10 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
-    new ExtractTextPlugin('css/styles.css', {allChunks: true}),
+    new ExtractTextPlugin({
+      filename: 'css/styles.css',
+      allChunks: true
+    }),
     new HtmlWebpackPlugin({
       inject: 'head',
       template: path.resolve(basePath, './index.html')
@@ -53,7 +56,7 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.json$/,
         exclude: /node_modules/,
@@ -67,17 +70,20 @@ module.exports = {
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&postcss-loader&localIdentName=[name]__[local]___[hash:base64:5]')
+        loader: ExtractTextPlugin.extract(require('./postcss.config.js'))
       },
       {
         test: /\.css$/,
         include: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
       },
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader?modules=true')
+        loader: ExtractTextPlugin.extract(require('./postcss.config.js'))
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -104,20 +110,12 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['', '.js', '.jsx', '.json', '.css'],
+    extensions: ['.js', '.jsx', '.json', '.css'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
       'layouts': layoutsPath,
       'modules': modulesPath
     }
-  },
-
-  postcss: [
-    require('autoprefixer'),
-    require('postcss-nested'),
-    require('postcss-modules')({
-      generateScopedName: '[folder]_[name]_[local]__[hash:base64:5]'
-    })
-  ]
+  }
 }
