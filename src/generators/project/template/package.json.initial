@@ -6,10 +6,10 @@
   "main": "src/main.js",
   "scripts": {
     "postinstall": "npm run build",
-    "server": "cross-env NODE_ENV=development node start.js",
-    "server:prod": "cross-env NODE_ENV=development node start.js",
-    "build": "cross-env NODE_ENV=development webpack -p --progress --config webpack.dev.config.js",
-    "build:prod": "cross-env NODE_ENV=production webpack -p --progress --config webpack.production.config.js",
+    "server": "cross-env NODE_ENV=development node ./bin/start.js",
+    "server:prod": "cross-env NODE_ENV=development node ./bin/start.js",
+    "build": "cross-env NODE_ENV=development webpack -p --progress --config ./config/webpack.dev.config.js",
+    "build:prod": "cross-env NODE_ENV=production webpack -p --progress --config ./config/webpack.production.config.js",
     "test": "jest",
     "eslint": "eslint --cache -c .eslintrc.js src"
   },

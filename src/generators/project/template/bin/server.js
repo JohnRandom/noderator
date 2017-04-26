@@ -2,11 +2,12 @@ import express from 'express'
 import path from 'path'
 
 const app = express()
+const ROOT_DIR = path.join(__dirname, '..')
 
 // Serve application file depending on environment
 app.get('/app.js', (req, res) => {
   if (process.env.PRODUCTION) {
-    res.sendFile(path.join(__dirname, '/build/app.js'))
+    res.sendFile(path.join(ROOT_DIR, '/build/app.js'))
   } else {
     res.redirect('//localhost:3000/build/app.js')
   }
@@ -15,7 +16,7 @@ app.get('/app.js', (req, res) => {
 // Serve aggregate stylesheet depending on environment
 app.get('/style.css', (req, res) => {
   if (process.env.PRODUCTION) {
-    res.sendFile(path.join(__dirname, '/build/style.css'))
+    res.sendFile(path.join(ROOT_DIR, '/build/style.css'))
   } else {
     res.redirect('//localhost:3000/build/style.css')
   }
@@ -23,13 +24,13 @@ app.get('/style.css', (req, res) => {
 
 // Serve index page
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/build/index.html'))
+  res.sendFile(path.join(ROOT_DIR, '/build/index.html'))
 })
 
 if (!process.env.PRODUCTION) {
   const webpack = require('webpack')
   const WebpackDevServer = require('webpack-dev-server')
-  const config = require('./webpack.dev.config')
+  const config = require('../config/webpack.dev.config')
 
   new WebpackDevServer(webpack(config), {
     publicPath: config.output.publicPath,
