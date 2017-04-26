@@ -6,9 +6,10 @@ const OccurrenceOrderPlugin = require('webpack/lib/optimize/OccurrenceOrderPlugi
 const DedupePlugin = require('webpack/lib/optimize/DedupePlugin')
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const rootPath = path.resolve(__dirname, '..')
-const buildPath = path.resolve(rootPath, './build')
+const distPath = path.resolve(rootPath, './dist')
 const basePath = path.resolve(rootPath, './src')
 const imagesPath = path.resolve(basePath, './assets/images')
 const componentsPath = path.resolve(basePath, './components')
@@ -20,8 +21,8 @@ module.exports = {
   entry: './src/main.js',
 
   output: {
-    path: buildPath,
-    filename: 'app.js',
+    path: distPath,
+    filename: 'js/app.js',
     publicPath: '/'
   },
 
@@ -33,7 +34,7 @@ module.exports = {
     }),
     new OccurrenceOrderPlugin(true),
     new DedupePlugin(),
-    new ExtractTextPlugin('style.css', {allChunks: true}),
+    new ExtractTextPlugin('css/styles.css', {allChunks: true}),
     new UglifyJsPlugin({
       compressor: {
         screw_ie8: true,
@@ -53,7 +54,10 @@ module.exports = {
     }),
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'async'
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: `${rootPath}/assets`, to: 'assets/' }
+    ])
   ],
 
   module: {
@@ -61,7 +65,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'eslint'
+        loader: 'eslint-loader'
       }
     ],
 
@@ -113,12 +117,6 @@ module.exports = {
         include: imagesPath
       }
     ]
-  },
-
-  resolveLoader: {
-    alias: {
-      'jison-loader': path.resolve(__dirname, './jison-loader.js')
-    }
   },
 
   resolve: {

@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const rootPath = path.resolve(__dirname, '..')
 const buildPath = path.resolve(rootPath, './build')
@@ -26,7 +27,7 @@ module.exports = {
 
   output: {
     path: buildPath,
-    filename: 'app.js',
+    filename: 'js/app.js',
     publicPath: 'http://localhost:3000/build/'
   },
 
@@ -38,14 +39,17 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
-    new ExtractTextPlugin('style.css', {allChunks: true}),
+    new ExtractTextPlugin('css/styles.css', {allChunks: true}),
     new HtmlWebpackPlugin({
       inject: 'head',
       template: path.resolve(basePath, './index.html')
     }),
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'async'
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: `${rootPath}/assets`, to: 'assets/' }
+    ])
   ],
 
   module: {
