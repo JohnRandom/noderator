@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "noderator",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "CLI for autogenerating code",
   "main": "index.js",
   "scripts": {
