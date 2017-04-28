@@ -1,6 +1,9 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import DevTools from 'mobx-react-devtools'
 import Header from 'components/Header'
+import PropTypes from 'prop-types'
+
+const isProduction = process.env.PRODUCTION
 
 export default class App extends Component {
   static propTypes = {
@@ -13,7 +16,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <DevTools />
+        { isProduction ? null : <DevTools /> }
         <Header/>
         { this.props.children }
       </div>

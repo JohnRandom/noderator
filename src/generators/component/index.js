@@ -6,7 +6,7 @@ const templateDir = path.join(__dirname, 'template')
 const placeholder = 'COMPONENT_NAME'
 
 function isSubcomponent(type) {
-  return type.indexOf('/') >= 0
+  return type.indexOf('/') > 0
 }
 
 function getModuleName(name) {
@@ -42,7 +42,10 @@ function renameTestFile(basePath, name) {
  *
  * Handling the second case requires to set a different `basePath` (module level
  * components folder instead of the global one) and a different `name` (stripping
- * the `ModuleName/` portion of the component name).
+ * the `ModuleName/` portion of the component name). If a component is created as
+ * part of a module, we assume that the module not being present constitutes an
+ * input error and will not proceed creating the component, but show an error
+ * instead.
  *
  * @param [String] keyword The task to perform (`generate` in this case)
  * @param [String] type The type of module to create (`component` in this case)
@@ -61,8 +64,14 @@ function generateComponent(keyword, type, name, program) {
   }
 
   if (isSubcomponent(name)) {
-    basePath = path.join('./src/modules', getModuleName(name), 'components')
+    const moduleName = getModuleName(name)
+    const modulePath = basePath = path.join('./src/modules', moduleName)
+    basePath = path.join(modulePath, 'components')
     name = getComponentName(name)
+
+    if (!(fs.existsSync(modulePath) || program.force)) {
+      throw new Error(`Module "${moduleName}" doesn't exist!`)
+    }
   }
 
   generate(basePath, templateDir, placeholder).apply(null, arguments)

@@ -3,6 +3,7 @@ const replace = require('replace-in-file')
 const chalk = require('chalk')
 const fsPath = require('path')
 const fs = require('fs-extra')
+const R = require('ramda')
 
 const substitutionOptions = {
   encoding: 'utf8'
@@ -49,7 +50,7 @@ function renameInitialFiles(pattern, verbose) {
   })
 }
 
-function checkDirectoryRoot(dirRoot, force) {
+function checkDirectoryRoot(dirRoot, force = false) {
   if (!fs.existsSync(dirRoot)) { return true }
 
   if (force) {
@@ -61,7 +62,7 @@ function checkDirectoryRoot(dirRoot, force) {
   return true
 }
 
-function generate(defaultPath, templateDir, placeholder) {
+function generate(defaultPath, templateDir, placeholder = null) {
   return function generateTree (keyword, type, name, program) {
     const { verbose, force } = program
     const path = program.path || defaultPath
@@ -74,7 +75,9 @@ function generate(defaultPath, templateDir, placeholder) {
     if (checkDirectoryRoot(location, force)) {
       fs.copySync(templateDir, location)
       renameInitialFiles(`${location}/**/*.initial`, verbose)
-      substituteName(`${location}/**/*.*`, placeholder, name, verbose)
+      if (!R.isNil(placeholder)) {
+        substituteName(`${location}/**/*.*`, placeholder, name, verbose)
+      }
     }
 
     console.log(`SUCCESS New ${type} "${name}" created at ${location}`)

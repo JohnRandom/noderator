@@ -3,12 +3,13 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OccurrenceOrderPlugin = require('webpack/lib/optimize/OccurrenceOrderPlugin')
-const DedupePlugin = require('webpack/lib/optimize/DedupePlugin')
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const buildPath = path.resolve(__dirname, './build')
-const basePath = path.resolve(__dirname, './src')
+const rootPath = path.resolve(__dirname, '..')
+const distPath = path.resolve(rootPath, './dist')
+const basePath = path.resolve(rootPath, './src')
 const imagesPath = path.resolve(basePath, './assets/images')
 const componentsPath = path.resolve(basePath, './components')
 const layoutsPath = path.resolve(basePath, './layouts')
@@ -19,8 +20,8 @@ module.exports = {
   entry: './src/main.js',
 
   output: {
-    path: buildPath,
-    filename: 'app.js',
+    path: distPath,
+    filename: 'js/app.js',
     publicPath: '/'
   },
 
@@ -31,8 +32,10 @@ module.exports = {
       }
     }),
     new OccurrenceOrderPlugin(true),
-    new DedupePlugin(),
-    new ExtractTextPlugin('style.css', {allChunks: true}),
+    new ExtractTextPlugin({
+      filename: 'css/styles.css',
+      allChunks: true
+    }),
     new UglifyJsPlugin({
       compressor: {
         screw_ie8: true,
@@ -44,27 +47,34 @@ module.exports = {
       output: {
         comments: false,
         screw_ie8: true
-      }
+      },
+      sourceMap: false
     }),
     new HtmlWebpackPlugin({
       inject: 'head',
+      title: 'PROJECT_NAME',
       template: path.resolve(basePath, './index.html')
     }),
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'async'
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: `${rootPath}/assets`, to: 'assets/' }
+    ])
   ],
 
   module: {
-    preLoaders: [
+    rules: [
       {
+        enforce: 'pre',
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'eslint'
-      }
-    ],
-
-    loaders: [
+        loader: 'eslint-loader',
+        options: {
+          failOnWarning: false,
+          failOnError: true
+        }
+      },
       {
         test: /\.json$/,
         exclude: /node_modules/,
@@ -78,17 +88,20 @@ module.exports = {
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&postcss-loader&localIdentName=[name]__[local]___[hash:base64:5]')
+        loader: ExtractTextPlugin.extract(require('./postcss.config.js'))
       },
       {
         test: /\.css$/,
         include: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
       },
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader?modules=true')
+        loader: ExtractTextPlugin.extract(require('./postcss.config.js'))
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -114,32 +127,13 @@ module.exports = {
     ]
   },
 
-  resolveLoader: {
-    alias: {
-      'jison-loader': path.resolve(__dirname, './jison-loader.js')
-    }
-  },
-
   resolve: {
-    extensions: ['', '.js', '.jsx', '.css'],
+    extensions: ['.js', '.jsx', '.css'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
       'layouts': layoutsPath,
       'modules': modulesPath
     }
-  },
-
-  postcss: [
-    require('autoprefixer'),
-    require('postcss-nested'),
-    require('postcss-modules')({
-      generateScopedName: '[folder]_[name]_[local]__[hash:base64:5]'
-    })
-  ],
-
-  eslint: {
-    failOnWarning: false,
-    failOnError: true
   }
 }

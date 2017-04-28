@@ -5,7 +5,7 @@ const R = require('ramda')
 
 function getConfig() {
   let config
-  const path = program.path || './config.js'
+  const path = program.config || `${__dirname}/config.js`
 
   try {
     config = require(path)
@@ -71,7 +71,7 @@ program
         func(keyword, type, name, program)
       } catch (err) {
         console.log(chalk.red(err.message))
-        console.log(chalk.red(err.stack))
+        if (program.verbose) console.log(chalk.red(err.stack))
         process.exit(1)
       }
     })

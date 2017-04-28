@@ -3,9 +3,11 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const buildPath = path.resolve(__dirname, './build')
-const basePath = path.resolve(__dirname, './src')
+const rootPath = path.resolve(__dirname, '..')
+const buildPath = path.resolve(rootPath, './build')
+const basePath = path.resolve(rootPath, './src')
 const imagesPath = path.resolve(basePath, './assets/images')
 const componentsPath = path.resolve(basePath, './components')
 const layoutsPath = path.resolve(basePath, './layouts')
@@ -13,7 +15,7 @@ const modulesPath = path.resolve(basePath, './modules')
 
 module.exports = {
   cache: true,
-  debug: true,
+  // debug: true,
   devtool: 'eval-source-map',
 
   entry: [
@@ -25,7 +27,7 @@ module.exports = {
 
   output: {
     path: buildPath,
-    filename: 'app.js',
+    filename: 'js/app.js',
     publicPath: 'http://localhost:3000/build/'
   },
 
@@ -36,19 +38,26 @@ module.exports = {
       }
     }),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new ExtractTextPlugin('style.css', {allChunks: true}),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new ExtractTextPlugin({
+      filename: 'css/styles.css',
+      allChunks: true
+    }),
     new HtmlWebpackPlugin({
       inject: 'head',
+      title: 'PROJECT_NAME',
       template: path.resolve(basePath, './index.html')
     }),
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'async'
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: `${rootPath}/assets`, to: 'assets/' }
+    ])
   ],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.json$/,
         exclude: /node_modules/,
@@ -62,17 +71,20 @@ module.exports = {
       {
         test: /\.css$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?modules&importLoaders=1&postcss-loader&localIdentName=[name]__[local]___[hash:base64:5]')
+        loader: ExtractTextPlugin.extract(require('./postcss.config.js'))
       },
       {
         test: /\.css$/,
         include: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader'
+        })
       },
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader!sass-loader?modules=true')
+        loader: ExtractTextPlugin.extract(require('./postcss.config.js'))
       },
       {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
@@ -99,20 +111,12 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['', '.js', '.jsx', '.json', '.css'],
+    extensions: ['.js', '.jsx', '.json', '.css'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
       'layouts': layoutsPath,
       'modules': modulesPath
     }
-  },
-
-  postcss: [
-    require('autoprefixer'),
-    require('postcss-nested'),
-    require('postcss-modules')({
-      generateScopedName: '[folder]_[name]_[local]__[hash:base64:5]'
-    })
-  ]
+  }
 }

@@ -1,5 +1,7 @@
 # Noderator 0.1.0
 
+There is a [project wiki](https://github.com/JohnRandom/noderator/wiki) containing additional documentation and meeting notes.
+
 ## Installation
 
 ### Via NPM from GitHub
