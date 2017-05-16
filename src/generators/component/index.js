@@ -28,6 +28,15 @@ function renameComponent(basePath, name) {
   fs.renameSync(componentFile, `${componentDir}/${name}.jsx`)
 }
 
+function renameStyles(basePath, name) {
+  const componentDir = path.join(basePath, name)
+  const styleFiles = [ 'globals', 'styles', 'variables' ]
+  styleFiles.forEach((style) => {
+    const styleFile = path.join(componentDir, `component.${style}.scss`)
+    fs.renameSync(styleFile, `${componentDir}/${name}.${style}.scss`)
+  })
+}
+
 function renameTestFile(basePath, name) {
   const testDir = path.join(basePath, name, '__tests__')
   const testFile = path.join(testDir, 'component.tests.js')
@@ -76,6 +85,7 @@ function generateComponent(keyword, type, name, program) {
 
   generate(basePath, templateDir, placeholder).apply(null, arguments)
   renameComponent(basePath, name)
+  renameStyles(basePath, name)
   renameTestFile(basePath, name)
 }
 
