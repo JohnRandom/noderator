@@ -12,17 +12,17 @@ const imagesPath = path.resolve(basePath, './assets/images')
 const componentsPath = path.resolve(basePath, './components')
 const layoutsPath = path.resolve(basePath, './layouts')
 const modulesPath = path.resolve(basePath, './modules')
+const libPath = path.resolve(basePath, './lib')
 
 module.exports = {
   cache: true,
-  // debug: true,
   devtool: 'eval-source-map',
 
   entry: [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:3000',
     'webpack/hot/only-dev-server',
-    './src/main.js'
+    './src/main.tsx'
   ],
 
   output: {
@@ -58,6 +58,13 @@ module.exports = {
 
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        options: {
+          configFileName: path.resolve(rootPath, 'config/tsconfig.json')
+        }
+      },
       {
         test: /\.json$/,
         exclude: /node_modules/,
@@ -111,12 +118,13 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.css'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.scss'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
       'layouts': layoutsPath,
-      'modules': modulesPath
+      'modules': modulesPath,
+      'lib': libPath
     }
   }
 }
