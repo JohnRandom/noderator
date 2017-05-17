@@ -1,4 +1,6 @@
+const chalk = require('chalk')
 const fs = require('fs-extra')
+const glob = require('glob')
 const path = require('path')
 const { generate } = require('../../utils')
 
@@ -22,25 +24,16 @@ function checkName(name) {
   return (parts === 1 || parts === 2)
 }
 
-function renameComponent(basePath, name) {
-  const componentDir = path.join(basePath, name)
-  const componentFile = path.join(componentDir, 'component.jsx')
-  fs.renameSync(componentFile, `${componentDir}/${name}.jsx`)
-}
-
-function renameStyles(basePath, name) {
-  const componentDir = path.join(basePath, name)
-  const styleFiles = [ 'globals', 'styles', 'variables' ]
-  styleFiles.forEach((style) => {
-    const styleFile = path.join(componentDir, `component.${style}.scss`)
-    fs.renameSync(styleFile, `${componentDir}/${name}.${style}.scss`)
+function renameFiles(basePath, name, opts) {
+  const paths = glob.sync(`${basePath}/**/component.*`)
+  paths.forEach((path) => {
+    const newPath = path.replace(/component\./g, `${name}.`)
+    if (opts.verbose) {
+      const msg = `Renaming template file "${path}" into "${newPath}"`
+      console.log(chalk.yellow('VERBOSE'), msg)
+    }
+    fs.renameSync(path, newPath)
   })
-}
-
-function renameTestFile(basePath, name) {
-  const testDir = path.join(basePath, name, '__tests__')
-  const testFile = path.join(testDir, 'component.tests.js')
-  fs.renameSync(testFile, `${testDir}/${name}.tests.js`)
 }
 
 /*
@@ -65,6 +58,7 @@ function renameTestFile(basePath, name) {
  */
 function generateComponent(keyword, type, name, program) {
   let basePath = './src/components'
+  const { verbose } = program
 
   if (!checkName(name)) {
     let msg = 'Component name has to be either <ComponentName>'
@@ -84,9 +78,7 @@ function generateComponent(keyword, type, name, program) {
   }
 
   generate(basePath, templateDir, placeholder).apply(null, arguments)
-  renameComponent(basePath, name)
-  renameStyles(basePath, name)
-  renameTestFile(basePath, name)
+  renameFiles(basePath, name, { verbose })
 }
 
 module.exports = generateComponent
