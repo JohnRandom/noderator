@@ -18,7 +18,7 @@ const libPath = path.resolve(basePath, './lib')
 
 module.exports = {
   devtool: 'source-map',
-  entry: './src/main.tsx',
+  entry: './src/main.js',
 
   output: {
     path: distPath,
@@ -78,10 +78,7 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: {
-          configFileName: path.resolve(rootPath, 'config/tsconfig.json')
-        }
+        loader: 'ts-loader'
       },
       {
         test: /\.json$/,

@@ -22,7 +22,7 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:3000',
     'webpack/hot/only-dev-server',
-    './src/main.tsx'
+    './src/main.js'
   ],
 
   output: {
@@ -61,9 +61,6 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: 'ts-loader'
-        // options: {
-        //   configFileName: path.resolve(rootPath, 'config/tsconfig.json')
-        // }
       },
       {
         test: /\.json$/,
