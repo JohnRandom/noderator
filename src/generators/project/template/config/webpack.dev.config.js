@@ -60,10 +60,10 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: {
-          configFileName: path.resolve(rootPath, 'config/tsconfig.json')
-        }
+        loader: 'ts-loader'
+        // options: {
+        //   configFileName: path.resolve(rootPath, 'config/tsconfig.json')
+        // }
       },
       {
         test: /\.json$/,

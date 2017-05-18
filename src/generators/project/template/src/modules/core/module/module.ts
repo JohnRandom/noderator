@@ -6,16 +6,16 @@ import { InjectionToken } from './injection-token';
  * ```
  * const module = new Module([Service1, Service2], [ChildModule1, ChildModule2]);
  * ```
- * 
+ *
  * @description
- * 
+ *
  * Class to define reusable module in EPO frontend infrastructure.
  */
 export class Module {
   /**
    * Array of injection tokens. Only source of truth for dependency injection.
    */
-  private tokens: EPO.Core.Module.ProvidingToken[] = [];
+  private tokens: EPO.Core.Module.ProviderToken[] = [];
 
   /**
    * Parent module. If user tries to get service from this instance we delegate instantiation to parent module
@@ -39,7 +39,7 @@ export class Module {
   }
 
   /**
-   * 
+   *
    */
   constructor (providers: EPO.Core.Module.Provider[], children: Module[] = []) {
     this.children = children;
@@ -77,11 +77,11 @@ export class Module {
 
   /**
    * Bootstraps module.
-   * 
+   *
    * @description
-   * 
+   *
    * Tokens do not instated by default we have to bootstrap our module manually.
-   * In this way we can have several life cycle stages like 'configuration' or 'run'. 
+   * In this way we can have several life cycle stages like 'configuration' or 'run'.
    */
   public bootstrap () {
     if (this.bootstraped) {
@@ -119,7 +119,7 @@ export class Module {
     }
 
     const instance = token.instance as T;
-     
+
     return instance;
   }
 
@@ -129,12 +129,12 @@ export class Module {
 
   /**
    * Instantiate one token.
-   * 
+   *
    * @description
-   * 
+   *
    * Function goes recursevly through dependencise and instantiates them
    */
-  private instantiate (token: EPO.Core.Module.ProvidingToken): void {
+  private instantiate (token: EPO.Core.Module.ProviderToken): void {
     // If we provide current token as value just use this value as token instance
     // and do not resolve of it dependencies
     if (typeof token.asValue !== 'undefined') {
@@ -151,7 +151,7 @@ export class Module {
     let manualDeps = []; // Injected with @Inject decorator
     try {
       deps = (Reflect as any).getOwnMetadata('design:paramtypes', token.asClass) || [];
-      
+
       typeDeps = (Reflect as any).getOwnMetadata('design:paramtypes', token.asClass) || [];
       manualDeps = (Reflect as any).getOwnMetadata('parameters', token.asClass) || [];
 
@@ -165,13 +165,13 @@ export class Module {
     } catch (err) {
       console.error('Cannot get dependencies for \n', token);
     }
-    
+
     // Get all tokens for this class
     const dependenciesTokens = deps.map((provide: Function) => {
       const token = this.tokens.find(t => t.provide === provide);
       if (!token) {
         throw new Error(`${(provide as any)['name']} is not registered!`);
-      } 
+      }
       return token;
     });
 
@@ -186,7 +186,7 @@ export class Module {
     }
 
     // If we get to this point we can be sure that our dependencies are instantiated
-    const constructorParams = dependenciesTokens.map((t: EPO.Core.Module.ProvidingToken) => t.instance);
+    const constructorParams = dependenciesTokens.map((t: EPO.Core.Module.ProviderToken) => t.instance);
     // Typescript cannot check input params of constructor when we making 'new'
     // so we have to convert constructor into 'any'
     token.instance = new (token.asClass as any)(...constructorParams);

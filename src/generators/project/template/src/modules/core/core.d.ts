@@ -1,6 +1,6 @@
 declare module EPO.Core.Module {
 
-  export interface ProvidingToken {
+  export interface ProviderToken {
     provide: Function | Object;
     asClass?: Function;
     asValue?: Object;
@@ -8,5 +8,5 @@ declare module EPO.Core.Module {
     instance?: Object
   }
 
-  export type Provider = Function | ProvidingToken;
+  export type Provider = Function | ProviderToken;
 }
