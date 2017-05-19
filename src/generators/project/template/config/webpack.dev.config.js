@@ -12,10 +12,10 @@ const imagesPath = path.resolve(basePath, './assets/images')
 const componentsPath = path.resolve(basePath, './components')
 const layoutsPath = path.resolve(basePath, './layouts')
 const modulesPath = path.resolve(basePath, './modules')
+const libPath = path.resolve(basePath, './lib')
 
 module.exports = {
   cache: true,
-  // debug: true,
   devtool: 'eval-source-map',
 
   entry: [
@@ -58,6 +58,10 @@ module.exports = {
 
   module: {
     rules: [
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader'
+      },
       {
         test: /\.json$/,
         exclude: /node_modules/,
@@ -111,12 +115,13 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.css'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.scss'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
       'layouts': layoutsPath,
-      'modules': modulesPath
+      'modules': modulesPath,
+      'lib': libPath
     }
   }
 }

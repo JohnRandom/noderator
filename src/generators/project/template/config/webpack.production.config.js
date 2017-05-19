@@ -14,6 +14,7 @@ const imagesPath = path.resolve(basePath, './assets/images')
 const componentsPath = path.resolve(basePath, './components')
 const layoutsPath = path.resolve(basePath, './layouts')
 const modulesPath = path.resolve(basePath, './modules')
+const libPath = path.resolve(basePath, './lib')
 
 module.exports = {
   devtool: 'source-map',
@@ -76,6 +77,10 @@ module.exports = {
         }
       },
       {
+        test: /\.tsx?$/,
+        loader: 'ts-loader'
+      },
+      {
         test: /\.json$/,
         exclude: /node_modules/,
         loader: 'json'
@@ -128,12 +133,13 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.css'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.scss'],
     alias: {
       'images': imagesPath,
       'components': componentsPath,
       'layouts': layoutsPath,
-      'modules': modulesPath
+      'modules': modulesPath,
+      'lib': libPath
     }
   }
 }

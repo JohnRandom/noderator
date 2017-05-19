@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './styles'
+import styles from './COMPONENT_NAME.styles'
 
 class COMPONENT_NAME extends React.Component {
   render() {
