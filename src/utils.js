@@ -5,6 +5,18 @@ const fsPath = require('path')
 const fs = require('fs-extra')
 const R = require('ramda')
 
+function findRoot(path = null) {
+  const cwd = path || process.cwd()
+
+  if (fs.existsSync(`${cwd}/package.json`)) {
+    return cwd
+  } else if (cwd === '/') {
+    throw Error('Cannot locate project root')
+  }
+
+  return findRoot(fsPath.resolve(cwd, '..'))
+}
+
 const substitutionOptions = {
   encoding: 'utf8'
 }
@@ -88,5 +100,6 @@ module.exports = {
   substituteName,
   renameInitialFiles,
   checkDirectoryRoot,
-  generate
+  generate,
+  findRoot
 }

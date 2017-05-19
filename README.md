@@ -1,4 +1,4 @@
-# Noderator 0.1.0
+# Noderator 0.4.0
 
 There is a [project wiki](https://github.com/JohnRandom/noderator/wiki) containing additional documentation and meeting notes.
 
@@ -20,6 +20,16 @@ For the development version or any other global branch:
 For the latest release:
 ```
 npm install -g JohnRandom/noderator#develop
+```
+
+To install a copy of Noderator you can actively work on, you first have to close the
+Noderator repository:
+```
+git clone git@github.com:JohnRandom/noderator.git
+```
+and then, locally link the project:
+```
+cd noderator && npm link
 ```
 
 ## Usage
@@ -56,6 +66,38 @@ Options:
 | `path`    | Provides a path were to copy the template directories and files. It overwrites the default locations. |
 | `verbose` | More verbose output during code generation.                           |
 | `force`   | If new code would overwrite existing one, noderator will throw an error and exit with status (1). This flag will prevent this behavior, issue a warning instead and overwrite the existing file or directory. |
+
+### Configuration
+
+Noderator comes with a basic configuration scaffold, that maps keywords and types to built-in functions. The user can overwrite this behavior and two ways:
+
+  1. In the project root, include a `.nrconfig` file that provides the configuration
+  2. Point to a configuration file, using the `-c` or `--config` cmdline argument
+
+The structure of the built-in configuration can be found [here](./config.js) and looks like this:
+
+```js
+module.exports = {
+  srcPath: null,
+  generate: {
+    project: [ require('./src/generators/project') ],
+    module: [ require('./src/generators/module') ],
+    component: [ require('./src/generators/component') ]
+  }
+}
+```
+
+Configurations are being merge shallowly, so you can overwrite `srcPath` by providing your own `.nrconfig` and just add a single key:
+
+```js
+const path = require('path')
+
+module.exports = {
+  srcPath: path.resolve(__dirname, 'src')
+}
+```
+
+During path resolution, `srcPath` takes precedent over Noderator trying to resolve the project root itself.
 
 ### Keywords
 
@@ -111,11 +153,11 @@ The `component` type creates new components, by default at `src/components`, whi
 
 `<componentRoot>`
   * `__tests__/`
-  * `_globals.scss`
-  * `_variables.scss`
-  * component.jsx
+  * `<COMPONENT_NAME>`.globals.scss
+  * `<COMPONENT_NAME>`.variables.scss
+  * `<COMPONENT_NAME>`.styles.scss
+  * `<COMPONENT_NAME>`.jsx
   * index.js
-  * styles.scss
 
 Alternatively, a component can be created for an existing module (let's say `Markers`), using the following notation during component generation:
 

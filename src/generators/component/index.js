@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const fs = require('fs-extra')
 const glob = require('glob')
 const path = require('path')
-const { generate } = require('../../utils')
+const { generate, findRoot } = require('../../utils')
 
 const templateDir = path.join(__dirname, 'template')
 const placeholder = 'COMPONENT_NAME'
@@ -57,7 +57,9 @@ function renameFiles(basePath, name, opts) {
  * @see https://www.npmjs.com/package/commander
  */
 function generateComponent(keyword, type, name, program) {
-  let basePath = './src/components'
+  let basePath = program.config.srcPath || path.resolve(findRoot(), 'src')
+  let componentsPath = path.join(basePath, 'components')
+  let modulesPath = path.join(basePath, 'modules')
   const { verbose } = program
 
   if (!checkName(name)) {
@@ -68,8 +70,8 @@ function generateComponent(keyword, type, name, program) {
 
   if (isSubcomponent(name)) {
     const moduleName = getModuleName(name)
-    const modulePath = basePath = path.join('./src/modules', moduleName)
-    basePath = path.join(modulePath, 'components')
+    const modulePath = basePath = path.join(modulesPath, moduleName)
+    componentsPath = path.join(modulePath, 'components')
     name = getComponentName(name)
 
     if (!(fs.existsSync(modulePath) || program.force)) {
@@ -77,8 +79,8 @@ function generateComponent(keyword, type, name, program) {
     }
   }
 
-  generate(basePath, templateDir, placeholder).apply(null, arguments)
-  renameFiles(basePath, name, { verbose })
+  generate(componentsPath, templateDir, placeholder).apply(null, arguments)
+  renameFiles(componentsPath, name, { verbose })
 }
 
 module.exports = generateComponent
