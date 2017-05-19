@@ -1,18 +1,35 @@
 #!/usr/bin/env node
 const chalk = require('chalk')
+const fsPath = require('path')
 const program = require('commander')
 const R = require('ramda')
 
-function getConfig() {
-  let config
-  const path = program.config || `${__dirname}/config.js`
+const { findRoot } = require('./src/utils')
+
+function getCustomConfig() {
+  let config = null
+  const configPath = program.config || fsPath.join(findRoot(), '.nrconfig')
+
+  logVerbose('configPath', configPath)
 
   try {
-    config = require(path)
+    if (configPath) config = require(configPath)
   } catch (err) {
-    console.log(chalk.red(`ERROR: Cannot read config at "${path}"`))
-    console.log(chalk.red(err))
-    process.exit(1)
+    logVerbose('Unable to locate custom config')
+  }
+
+  return config
+}
+
+function getConfig(type) {
+  let config = require(`${__dirname}/config.js`)
+
+  if (type === 'project') return config
+
+  const customConfig = getCustomConfig()
+
+  if (customConfig && customConfig instanceof Object) {
+    config = Object.assign({}, config, customConfig)
   }
 
   return config
@@ -37,7 +54,7 @@ program
   .option('-f, --force', 'Force the action, can overwrite existing files', true)
 
   .action((keyword, type, name) => {
-    program.config = getConfig()
+    program.config = getConfig(type)
 
     logVerbose('Configuration:')
     logVerbose(program.config)
